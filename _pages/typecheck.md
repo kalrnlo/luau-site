@@ -48,7 +48,7 @@ local b2: B = a1 -- not ok
 
 ## Builtin types
 
-The Luau VM supports 9 primitive types: `nil`, `string`, `number`, `boolean`, `table`, `function`, `thread`, `userdata`, and `buffer`. Of these, `table` and `function` are not represented by name, but have their dedicated syntax as covered in this [syntax document](syntax), and `userdata` is represented by [concrete types](#roblox-types); other types can be specified by their name.
+The Luau VM supports 9 primitive types: `nil`, `string`, `number`, `boolean`, `table`, `function`, `thread`, `userdata`, and `buffer`. Of these, `table` and `function` are not represented by name, but have their dedicated syntax as covered in this [syntax document](syntax), and `userdata` is represented by other types can be specified by their name.
 
 The type checker also provides the builtin types [`unknown`](#unknown-type), [`never`](#never-type), and [`any`](#any-type).
 
@@ -320,7 +320,7 @@ local r4: string = f(12345) -- ok
 
 Note: it's impossible to create an intersection type of some primitive types, e.g. `string & number`, or `string & boolean`, or other variations thereof.
 
-Note: Luau still does not support user-defined overloaded functions. Some of Roblox and Lua 5.1 functions have different function signature, so inherently requires overloaded functions.
+Note: Luau still does not support user-defined overloaded functions. Some of and Lua 5.1 functions have different function signature, so inherently requires overloaded functions.
 
 ## Singleton types (aka literal types)
 
@@ -617,23 +617,6 @@ local numericValue = 1
 local value = numericValue :: any             -- ok, all expressions may be cast to 'any'
 local flag = numericValue :: boolean          -- not ok, invalid 'number' to 'boolean' conversion
 ```
-
-## Roblox types
-
-Roblox supports a rich set of classes and data types, [documented here](https://developer.roblox.com/en-us/api-reference). All of them are readily available for the type checker to use by their name (e.g. `Part` or `RaycastResult`).
-
-When one type inherits from another type, the type checker models this relationship and allows to cast a subclass to the parent class implicitly, so you can pass a `Part` to a function that expects an `Instance`.
-
-All enums are also available to use by their name as part of the `Enum` type library, e.g. `local m: Enum.Material = part.Material`.
-
-Finally, we can automatically deduce what calls like `Instance.new` and `game:GetService` are supposed to return:
-
-```lua
-local part = Instance.new("Part")
-local basePart: BasePart = part
-```
-
-Note that many of these types provide some properties and methods in both lowerCase and UpperCase; the lowerCase variants are deprecated, and the type system will ask you to use the UpperCase variants instead.
 
 ## Module interactions
 
