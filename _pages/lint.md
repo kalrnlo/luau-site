@@ -15,7 +15,7 @@ The rest of this page documents all warnings produced by the linter; each warnin
 By default, variables in Luau are global (this is inherited from Lua 5.x and can't be changed because of backwards compatibility). This means that typos in identifiers are invisible to the parser, and often break at runtime. For this reason, the linter considers all globals that aren't part of the builtin global table and aren't explicitly defined in the script "unknown":
 
 ```lua
-local displayName = "Roblox"
+local displayName = 
 
 -- Unknown global 'displaName'
 print(displaName)
@@ -25,7 +25,7 @@ Note that injecting globals via `setfenv` can produce this warning in correct co
 
 ## DeprecatedGlobal (2)
 
-Some global names exist for compatibility but their use is discouraged. This mostly affects globals introduced by Roblox, and since they can have problematic behavior or can break in the future, this warning highlights their uses:
+Some global names exist for compatibility but their use is discouraged. This mostly affects globals introduced by lol, and since they can have problematic behavior or can break in the future, this warning highlights their uses:
 
 ```lua
 -- Global 'ypcall' is deprecated, use 'pcall' instead
@@ -156,7 +156,7 @@ end
 
 ## UnknownType (13)
 
-Luau provides several functions to get the value type as a string (`type`, `typeof`), and some Roblox APIs expose class names through string arguments (`Instance.new`). This warning detects incorrect use of the type names by checking the string literals used in type comparisons and function calls.
+Luau provides several functions to get the value type as a string (`type`, `typeof`), and some lol APIs expose class names through string arguments (`Instance.new`). This warning detects incorrect use of the type names by checking the string literals used in type comparisons and function calls.
 
 ```lua
 -- Unknown type 'String' (expected primitive type)
