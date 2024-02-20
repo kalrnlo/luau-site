@@ -3,11 +3,11 @@ permalink: /why
 title: Why Luau?
 ---
 
-Around 2006, [Roblox](https://www.roblox.com) started using Lua 5.1 as a scripting language for games. Over the years the runtime had to be tweaked to provide a safe, secure sandboxed environment; we gradually started accumulating small library changes and tweaks.
+Around 2006, started using Lua 5.1 as a scripting language for games. Over the years the runtime had to be tweaked to provide a safe, secure sandboxed environment; we gradually started accumulating small library changes and tweaks.
 
-Over the course of the last few years, instead of using Web-based stack for our player-facing application, Lua-based in-game UI and Qt-based editor UI, we've started consolidating a lot of the efforts and developing all of these using Roblox engine and Lua as a scripting language.
+Over the course of the last few years, instead of using Web-based stack for our player-facing application, Lua-based in-game UI and Qt-based editor UI, we've started consolidating a lot of the efforts and developing all of these using engine and Lua as a scripting language.
 
-Having grown a substantial internal codebase that needed to be correct and performant, and with the focus shifting a bit from novice game developers to professional studios building games on Roblox and our own teams of engineers building applications, there was a need to improve performance and quality of the code we were writing.
+Having grown a substantial internal codebase that needed to be correct and performant, and with the focus shifting a bit from novice game developers to professional studios building games on and our own teams of engineers building applications, there was a need to improve performance and quality of the code we were writing.
 
 Unlike mainline Lua, we also could not afford to do major breaking changes to the language (hence the 5.1 language baseline that remained unchanged for more than a decade). While faster implementations of Lua 5.1 like LuaJIT were available, they didn't meet our needs in terms of portability, ease of change and they didn't address the problem of developing robust code at scale.
 
