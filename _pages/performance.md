@@ -11,7 +11,7 @@ One of main goals of Luau is to enable high performance code, with gameplay code
 
 Both of these goals are important - it's insufficient to just focus on the highly tuned code, and all things being equal we prefer to raise all boats by implementing general optimizations. However, in some cases it's important to be aware of optimizations that Luau does and doesn't do.
 
-Worth noting is that Luau is focused on, first and foremost, stable high performance code in interpreted context. This is because JIT compilation is not available on many platforms Luau runs on, and AOT compilation would only work for code that Roblox ships (and even that does not always work). This is in stark contrast with LuaJIT that, while providing an excellent interpreter as well, focuses a lot of the attention on JIT (with many optimizations unavailable in the interpreter).
+Worth noting is that Luau is focused on, first and foremost, stable high performance code in interpreted context. This is because JIT compilation is not available on many platforms Luau runs on, and AOT compilation would only work for code that ships (and even that does not always work). This is in stark contrast with LuaJIT that, while providing an excellent interpreter as well, focuses a lot of the attention on JIT (with many optimizations unavailable in the interpreter).
 
 Luau eventually plans to implement JIT on some platforms, but this is subject to careful memory safety analysis and is likely to not be deployed for client-side scripts, as the extra risk involved in JITs is much more pronounced when it may affect players.
 
