@@ -4,7 +4,7 @@ title: Sandboxing
 toc: true
 ---
 
-Luau is safe to embed. Broadly speaking, this means that even in the face of untrusted (and in Roblox case, actively malicious) code, the language and the standard library don't allow unsafe access to the underlying system, and don't have known bugs that allow escaping out of the sandbox (e.g. to gain native code execution through ROP gadgets et al). Additionally, the VM provides extra features to implement isolation of privileged code from unprivileged code and protect one from the other; this is important if the embedding environment decides to expose some APIs that may not be safe to call from untrusted code, for example because they do provide controlled access to the underlying system or risk PII exposure through fingerprinting etc.
+Luau is safe to embed. Broadly speaking, this means that even in the face of untrusted (and in case, actively malicious) code, the language and the standard library don't allow unsafe access to the underlying system, and don't have known bugs that allow escaping out of the sandbox (e.g. to gain native code execution through ROP gadgets et al). Additionally, the VM provides extra features to implement isolation of privileged code from unprivileged code and protect one from the other; this is important if the embedding environment decides to expose some APIs that may not be safe to call from untrusted code, for example because they do provide controlled access to the underlying system or risk PII exposure through fingerprinting etc.
 
 This safety is achieved through a combination of removing features from the standard library that are unsafe, adding features to the VM that make it possible to implement sandboxing and isolation, and making sure the implementation is safe from memory safety issues using fuzzing.
 
@@ -30,7 +30,7 @@ Finally, to make isolation possible within the same VM, the following global fun
 - `newproxy` only works with `true`/`false`/`nil` arguments.
 - `module` allowed overriding global packages and was removed as a result.
 
-> Note: `getfenv`/`setfenv` result in additional isolation challenges, as they allow injecting globals into scripts on the call stack. Ideally, these should be disabled as well, but unfortunately Roblox community relies on these for various reasons. This can be mitigated by limiting interaction between trusted and untrusted code, and/or using separate VMs.
+> Note: `getfenv`/`setfenv` result in additional isolation challenges, as they allow injecting globals into scripts on the call stack. Ideally, these should be disabled as well, but unfortunately community relies on these for various reasons. This can be mitigated by limiting interaction between trusted and untrusted code, and/or using separate VMs.
 
 ## Environment
 
@@ -44,7 +44,7 @@ When initializing the default globals table, the tables are protected from modif
 
 This is using the VM feature that is not accessible from scripts, that prevents all writes to the table, including assignments, `rawset` and `setmetatable`. This makes sure that globals can't be monkey-patched in place, and can only be substituted through `setfenv`.
 
-By itself this would mean that code that runs in Luau can't use globals at all, since assigning globals would fail. While this is feasible, in Roblox we solve this by creating a new global table for each script, that uses `__index` to point to the builtin global table. This safely sandboxes the builtin globals while still allowing writing globals from each script. This also means that short of exposing special shared globals from the host, all scripts are isolated from each other.
+By itself this would mean that code that runs in Luau can't use globals at all, since assigning globals would fail. While this is feasible, in we solve this by creating a new global table for each script, that uses `__index` to point to the builtin global table. This safely sandboxes the builtin globals while still allowing writing globals from each script. This also means that short of exposing special shared globals from the host, all scripts are isolated from each other.
 
 ## `__gc`
 
@@ -54,7 +54,7 @@ This mechanism is bad for performance, memory safety and isolation:
 
 - In Lua 5.1, `__gc` support requires traversing userdata lists redundantly during garbage collection to filter out finalizable objects
 - In later versions of Lua, userdata that implement `__gc` are split into separate lists; however, finalization prolongs the lifetime of the finalized objects which results in less prompt memory reclamation, and two-step destruction results in extra cache misses for userdata
-- `__gc` runs during garbage collection in context of an arbitrary thread which makes the thread identity mechanism used in Roblox to support trusted Luau code invalid
+- `__gc` runs during garbage collection in context of an arbitrary thread which makes the thread identity mechanism used in to support trusted Luau code invalid
 - Objects can be removed from weak tables *after* being finalized, which means that accessing these objects can result in memory safety bugs, unless all exposed userdata methods guard against use-after-gc.
 - If `__gc` method ever leaks to scripts, they can call it directly on an object and use any method exposed by that object after that. This means that `__gc` and all other exposed methods must support memory safety when called on a destroyed object.
 
@@ -69,8 +69,3 @@ In addition to preventing API access, it can be important for isolation to limit
 By default, no memory limits are imposed on the running code, so it's possible to exhaust the address space of the host; this is easy to configure from the host for Luau allocations, but of course with a rich API surface exposed by the host it's hard to eliminate this as a possibility. Memory exhaustion doesn't result in memory safety issues or any particular risk to the system that's running the host process, other than the host process getting terminated by the OS.
 
 Limiting CPU usage can be equally challenging with a rich API. However, Luau does provide a VM-level feature to try to contain runaway scripts which makes it possible to terminate any script externally. This works through a global interrupt mechanism, where the host can setup an interrupt handler at any point, and any Luau code is guaranteed to call this handler "eventually" (in practice this can happen at any function call or at any loop iteration). This still leaves the possibility of a very long running script open if the script manages to find a way to call a single C function that takes a lot of time, but short of that the interruption is very prompt.
-
-Roblox sets up the interrupt handler using a watchdog that:
-
-- Limits the runtime of any script in Studio to 10 seconds (configurable through Studio settings)
-- Upon client shutdown, interrupts execution of every running script 1 second after shutdown
